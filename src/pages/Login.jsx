@@ -3,23 +3,23 @@ import { useNavigate } from "react-router-dom";
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-const Login = () => {
-    const [phone, setPhone] = useState("")
-    const [password, setPassword] = useState("")
-    const  navigate = useNavigate("")
-    const token = localStorage.getItem("accessToken")
+const Login = ({ setIsLoggedIn }) => {
+  const [phone, setPhone] = useState("");
+  const [password, setPassword] = useState("");
+  const navigate = useNavigate();
+  const token = localStorage.getItem("accessToken");
 
-    useEffect(() => {
-        if(token?.length > 27) {
-            navigate("/home")
-        } else {
-            localStorage.removeItem("accessToken")
-        }
-    })
+  useEffect(() => {
+    if (token?.length > 27) {
+      setIsLoggedIn(true);
+      navigate("/home");
+    } else {
+      localStorage.removeItem("accessToken");
+    }
+  }, [token, navigate, setIsLoggedIn]);
 
   const loginToSite = (e) => {
     e.preventDefault();
-
 
     fetch("https://api.dezinfeksiyatashkent.uz/api/auth/signin", {
       method: "POST",
@@ -31,20 +31,21 @@ const Login = () => {
         password: password,
       }),
     })
-    .then((response) => response.json())
-    .then((data) => {
-        if(data?.success === true) {
-            localStorage.setItem("accessToken", data?.data?.tokens?.accessToken?.token)
-            toast.success(data?.message)
-            navigate("/home")
+      .then((response) => response.json())
+      .then((data) => {
+        if (data?.success === true) {
+          localStorage.setItem("accessToken", data?.data?.tokens?.accessToken?.token);
+          toast.success(data?.message);
+          setIsLoggedIn(true);
+          navigate("/home");
         } else {
-            toast.error(data?.message)
+          toast.error(data?.message);
         }
-    })
-    .catch((error) => {
+      })
+      .catch((error) => {
         console.log(error.message);
-    })
-  }
+      });
+  };
 
   const [phoneFocused, setPhoneFocused] = useState(false);
   const [passwordFocused, setPasswordFocused] = useState(false);
@@ -59,7 +60,7 @@ const Login = () => {
               type="text"
               placeholder="Phone"
               required
-              min={3}
+              minLength={3}
               onFocus={() => setPhoneFocused(true)}
               onBlur={() => setPhoneFocused(false)}
               style={{
@@ -75,7 +76,7 @@ const Login = () => {
               type="password"
               placeholder="Password"
               required
-              min={5}
+              minLength={5}
               onFocus={() => setPasswordFocused(true)}
               onBlur={() => setPasswordFocused(false)}
               style={{

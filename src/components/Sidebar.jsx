@@ -5,10 +5,10 @@ import { FaTh, FaBars, FaHome } from 'react-icons/fa'
 import { GrResources } from 'react-icons/gr'
 import { IoPeopleOutline, IoSettingsOutline } from 'react-icons/io5'
 import { TbLetterB } from 'react-icons/tb'
-import { NavLink } from 'react-router-dom'
+import { NavLink, Outlet } from 'react-router-dom'
 
 const Sidebar = ({children}) => {
-    const [isOpen, setIsOpen] = useState(false)
+    const [isOpen, setIsOpen] = useState(true)
     const toggle = () => setIsOpen(!isOpen)
     const menuItem = [
         {
@@ -66,7 +66,7 @@ const Sidebar = ({children}) => {
                 ))
             }
         </div>
-        <main className='w-[100%] p-5'>{children}</main>
+        <main className='w-[100%] p-5'><Outlet /></main>
     </div>
   )
 }
