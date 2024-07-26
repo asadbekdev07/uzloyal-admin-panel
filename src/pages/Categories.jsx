@@ -53,6 +53,51 @@ const Categories = () => {
   };
 
 
+  // EDIT FORM 
+  const editCategory = (e) => {
+    e.preventDefault()
+    const formData = new FormData()
+    formData.append('name', data.name);
+    formData.append('description', data.description);
+    fetch(`https://api.dezinfeksiyatashkent.uz/api/categories/${id}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      method: "PUT",
+      body: formData
+    }).then(res=>res.json()).then(res=>{
+      if(res.success){
+        message.success("Successfully changed")
+        getCategories();
+        handleEditModalClose();
+      } else {
+        message.error("Something went wrong")
+      }
+    }).catch(err=>{
+      console.log(err);
+    })
+  }
+
+  // DELETE FORM 
+  const handleDelete = (id) => {
+    fetch(`https://api.dezinfeksiyatashkent.uz/api/categories/${id}`, {
+      method: 'DELETE',
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+      .then((res) => res.json())
+      .then(() => {
+        getCategories();
+        hidePopover();
+        message.success("Successfully deleted")
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
+
   //   ACTIONS
 
   const handleModalOpen = () => {
@@ -74,6 +119,16 @@ const Categories = () => {
 
   const handlePopoverOpenChange = (newOpen, id) => {
     setOpenPopover(newOpen ? id : null);
+  };
+
+  const handleEditModalOpen = (item) => {
+    setId(item.id)
+    setOpenEditModal(true);
+    setData({...data, name: item.name, description: item.description})
+  };
+
+  const handleEditModalClose = () => {
+    setOpenEditModal(false);
   };
 
   //   TABLE
@@ -196,6 +251,43 @@ const Categories = () => {
           <div className="text-right">
             <button type="submit" className="text-white bg bg-[#1677ff] p-[10px_20px] rounded-[8px]">
               Add Location
+            </button>
+          </div>
+        </form>
+      </Modal>
+
+
+      {/* EDIT MODAL  */}
+
+      <Modal
+        title="Tahrirlash"
+        open={openEditModal}
+        onOk={handleEditModalOpen}
+        onCancel={handleEditModalClose}
+        footer={null}
+      >
+        <form onSubmit={editCategory}>
+          <div className="mb-[20px]">
+            <label className="block mb-[5px]">Name</label>
+            <input
+              type="text"
+              value={data.name}
+              className="w-full p-[8px] border border-[#e5e7eb] rounded"
+              onChange={(e)=>setData({...data, name:e.target.value})}
+            />
+          </div>
+          <div className="mb-[20px]">
+            <label className="block mb-[5px]">Description</label>
+            <input
+              type="text"
+              value={data.description}
+              className="w-full p-[8px] border border-[#e5e7eb] rounded"
+              onChange={(e)=>setData({...data, description:e.target.value})}
+            />
+          </div>
+          <div className="text-right">
+            <button type="submit" className="text-white bg bg-[#1677ff] p-[10px_20px] rounded-[8px]">
+              Edit
             </button>
           </div>
         </form>
