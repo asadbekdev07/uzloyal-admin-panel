@@ -12,11 +12,6 @@ const Sidebar = ({children}) => {
     const toggle = () => setIsOpen(!isOpen)
     const menuItem = [
         {
-            path: "/home",
-            name: "Home",
-            icon: <FaHome />
-        },
-        {
             path: "/categories",
             name: "Categories",
             icon: <BiCategory />

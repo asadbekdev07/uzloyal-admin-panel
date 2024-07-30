@@ -5,7 +5,6 @@ import {
   Route,
   Navigate,
 } from "react-router-dom";
-import Home from "./pages/Home.jsx";
 import Categories from "./pages/Categories.jsx";
 import Faqs from "./pages/Faqs.jsx";
 import News from "./pages/News.jsx";
@@ -34,12 +33,11 @@ function App() {
       <Routes>
         <Route
           path="/"
-          element={isLoggedIn ? <Navigate to="/home" /> : <Login setIsLoggedIn={setIsLoggedIn} />}
+          element={isLoggedIn ? <Navigate to="/categories" /> : <Login setIsLoggedIn={setIsLoggedIn} />}
         />
         <Route
           element={isLoggedIn ? <Sidebar /> : <Navigate to="/" />}
         >
-          <Route path="/home" element={<Home />} />
           <Route path="/categories" element={<Categories />} />
           <Route path="/faqs" element={<Faqs />} />
           <Route path="/news" element={<News />} />

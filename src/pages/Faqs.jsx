@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Button, Table, Popover, message } from 'antd';
+import { Button, Table, Popover, message, Modal } from 'antd';
 
 const Faqs = () => {
   const [faqs, setFaqs] = useState([]);
@@ -15,6 +15,7 @@ const Faqs = () => {
     text_tr: "",
     text_zh: "",
   });
+  const [id, setId] = useState(null);
   const [openModal, setOpenModal] = useState(false);
   const [openEditModal, setOpenEditModal] = useState(false);
   const [openPopover, setOpenPopover] = useState(null);
@@ -69,6 +70,64 @@ const Faqs = () => {
         message.error('Error adding category');
       });
   };
+
+
+
+  // EDIT FORM 
+  const editFaqs = (e) => {
+    e.preventDefault()
+    const formData = new FormData()
+    formData.append('title_en', data.title_en);
+    formData.append('title_ru', data.title_ru);
+    formData.append('title_uz', data.title_uz);
+    formData.append('title_zh', data.title_zh);
+    formData.append('title_tr', data.title_tr);
+    formData.append('text_en', data.text_en);
+    formData.append('text_ru', data.text_ru);
+    formData.append('text_uz', data.text_uz);
+    formData.append('text_zh', data.text_zh);
+    formData.append('text_tr', data.text_tr);
+    fetch(`https://api.dezinfeksiyatashkent.uz/api/faqs/${id}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      method: "PUT",
+      body: formData
+    }).then(res=>res.json()).then(res=>{
+      if(res.success){
+        message.success("Successfully changed")
+        getFaqs();
+        handleEditModalClose();
+      } else {
+        message.error("Something went wrong")
+      }
+    }).catch(err=>{
+      console.log(err);
+    })
+  }
+
+
+  // DELETE FORM 
+  const handleDelete = (id) => {
+    fetch(`https://api.dezinfeksiyatashkent.uz/api/faqs/${id}`, {
+      method: 'DELETE',
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+      .then((res) => res.json())
+      .then(() => {
+        getFaqs();
+        hidePopover();
+        resetFormData()
+        message.success("Successfully deleted")
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
+
 
   // ACTIONS
   const handleModalOpen = () => {
@@ -264,9 +323,227 @@ const Faqs = () => {
         <Table
           dataSource={dataSource}
           columns={columns}
-          pagination={{ pageSize: 5 }}
+          pagination={{ pageSize: 6 }}
         />
       </div>
+
+
+      {/* CREATE MODAL  */}
+      <Modal
+        title="Add Category"
+        open={openModal}
+        onCancel={handleModalClose}
+        footer={null}
+      >
+        <form onSubmit={createForm}>
+          <div className="mb-[20px]">
+            <label className="block mb-[5px]">Title (en)</label>
+            <input
+              type="text"
+              value={data.title_en}
+              onChange={(e) => setData({ ...data, title_en: e.target.value })}
+              className="w-full p-[8px] border border-[#e5e7eb] rounded"
+            />
+          </div>
+          <div className="mb-[20px]">
+            <label className="block mb-[5px]">Text (en)</label>
+            <input
+              type="text"
+              value={data.text_en}
+              onChange={(e) => setData({ ...data, text_en: e.target.value })}
+              className="w-full p-[8px] border border-[#e5e7eb] rounded"
+            />
+          </div>
+          <div className="mb-[20px]">
+            <label className="block mb-[5px]">Title (ru)</label>
+            <input
+              type="text"
+              value={data.title_ru}
+              onChange={(e) => setData({ ...data, title_ru: e.target.value })}
+              className="w-full p-[8px] border border-[#e5e7eb] rounded"
+            />
+          </div>
+          <div className="mb-[20px]">
+            <label className="block mb-[5px]">Text (ru)</label>
+            <input
+              type="text"
+              value={data.text_ru}
+              onChange={(e) => setData({ ...data, text_ru: e.target.value })}
+              className="w-full p-[8px] border border-[#e5e7eb] rounded"
+            />
+          </div>
+          <div className="mb-[20px]">
+            <label className="block mb-[5px]">Title (uz)</label>
+            <input
+              type="text"
+              value={data.title_uz}
+              onChange={(e) => setData({ ...data, title_uz: e.target.value })}
+              className="w-full p-[8px] border border-[#e5e7eb] rounded"
+            />
+          </div>
+          <div className="mb-[20px]">
+            <label className="block mb-[5px]">Text (uz)</label>
+            <input
+              type="text"
+              value={data.text_uz}
+              onChange={(e) => setData({ ...data, text_uz: e.target.value })}
+              className="w-full p-[8px] border border-[#e5e7eb] rounded"
+            />
+          </div>
+          <div className="mb-[20px]">
+            <label className="block mb-[5px]">Title (zh)</label>
+            <input
+              type="text"
+              value={data.title_zh}
+              onChange={(e) => setData({ ...data, title_zh: e.target.value })}
+              className="w-full p-[8px] border border-[#e5e7eb] rounded"
+            />
+          </div>
+          <div className="mb-[20px]">
+            <label className="block mb-[5px]">Text (zh)</label>
+            <input
+              type="text"
+              value={data.text_zh}
+              onChange={(e) => setData({ ...data, text_zh: e.target.value })}
+              className="w-full p-[8px] border border-[#e5e7eb] rounded"
+            />
+          </div>
+          <div className="mb-[20px]">
+            <label className="block mb-[5px]">Title (tr)</label>
+            <input
+              type="text"
+              value={data.title_tr}
+              onChange={(e) => setData({ ...data, title_tr: e.target.value })}
+              className="w-full p-[8px] border border-[#e5e7eb] rounded"
+            />
+          </div>
+          <div className="mb-[20px]">
+            <label className="block mb-[5px]">Text (tr)</label>
+            <input
+              type="text"
+              value={data.text_tr}
+              onChange={(e) => setData({ ...data, text_tr: e.target.value })}
+              className="w-full p-[8px] border border-[#e5e7eb] rounded"
+            />
+          </div>
+          <div className="text-right">
+            <button type="submit" className="text-white bg bg-[#1677ff] p-[10px_20px] rounded-[8px]">
+              Add Location
+            </button>
+          </div>
+        </form>
+      </Modal>
+
+
+      {/* EDIT MODAL  */}
+
+      <Modal
+        title="Tahrirlash"
+        open={openEditModal}
+        onOk={handleEditModalOpen}
+        onCancel={handleEditModalClose}
+        footer={null}
+      >
+        <form onSubmit={editFaqs}>
+        <div className="mb-[20px]">
+            <label className="block mb-[5px]">Title (en)</label>
+            <input
+              type="text"
+              value={data.title_en}
+              onChange={(e) => setData({ ...data, title_en: e.target.value })}
+              className="w-full p-[8px] border border-[#e5e7eb] rounded"
+            />
+          </div>
+          <div className="mb-[20px]">
+            <label className="block mb-[5px]">Text (en)</label>
+            <input
+              type="text"
+              value={data.text_en}
+              onChange={(e) => setData({ ...data, text_en: e.target.value })}
+              className="w-full p-[8px] border border-[#e5e7eb] rounded"
+            />
+          </div>
+          <div className="mb-[20px]">
+            <label className="block mb-[5px]">Title (ru)</label>
+            <input
+              type="text"
+              value={data.title_ru}
+              onChange={(e) => setData({ ...data, title_ru: e.target.value })}
+              className="w-full p-[8px] border border-[#e5e7eb] rounded"
+            />
+          </div>
+          <div className="mb-[20px]">
+            <label className="block mb-[5px]">Text (ru)</label>
+            <input
+              type="text"
+              value={data.text_ru}
+              onChange={(e) => setData({ ...data, text_ru: e.target.value })}
+              className="w-full p-[8px] border border-[#e5e7eb] rounded"
+            />
+          </div>
+          <div className="mb-[20px]">
+            <label className="block mb-[5px]">Title (uz)</label>
+            <input
+              type="text"
+              value={data.title_uz}
+              onChange={(e) => setData({ ...data, title_uz: e.target.value })}
+              className="w-full p-[8px] border border-[#e5e7eb] rounded"
+            />
+          </div>
+          <div className="mb-[20px]">
+            <label className="block mb-[5px]">Text (uz)</label>
+            <input
+              type="text"
+              value={data.text_uz}
+              onChange={(e) => setData({ ...data, text_uz: e.target.value })}
+              className="w-full p-[8px] border border-[#e5e7eb] rounded"
+            />
+          </div>
+          <div className="mb-[20px]">
+            <label className="block mb-[5px]">Title (zh)</label>
+            <input
+              type="text"
+              value={data.title_zh}
+              onChange={(e) => setData({ ...data, title_zh: e.target.value })}
+              className="w-full p-[8px] border border-[#e5e7eb] rounded"
+            />
+          </div>
+          <div className="mb-[20px]">
+            <label className="block mb-[5px]">Text (zh)</label>
+            <input
+              type="text"
+              value={data.text_zh}
+              onChange={(e) => setData({ ...data, text_zh: e.target.value })}
+              className="w-full p-[8px] border border-[#e5e7eb] rounded"
+            />
+          </div>
+          <div className="mb-[20px]">
+            <label className="block mb-[5px]">Title (tr)</label>
+            <input
+              type="text"
+              value={data.title_tr}
+              onChange={(e) => setData({ ...data, title_tr: e.target.value })}
+              className="w-full p-[8px] border border-[#e5e7eb] rounded"
+            />
+          </div>
+          <div className="mb-[20px]">
+            <label className="block mb-[5px]">Text (tr)</label>
+            <input
+              type="text"
+              value={data.text_tr}
+              onChange={(e) => setData({ ...data, text_tr: e.target.value })}
+              className="w-full p-[8px] border border-[#e5e7eb] rounded"
+            />
+          </div>
+          <div className="text-right">
+            <button type="submit" className="text-white bg bg-[#1677ff] p-[10px_20px] rounded-[8px]">
+              Edit
+            </button>
+          </div>
+        </form>
+      </Modal>
+
+
     </div>
   );
 };

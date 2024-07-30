@@ -12,7 +12,7 @@ const Login = ({ setIsLoggedIn }) => {
   useEffect(() => {
     if (token?.length > 27) {
       setIsLoggedIn(true);
-      navigate("/home");
+      navigate("/categories");
     } else {
       localStorage.removeItem("accessToken");
     }
